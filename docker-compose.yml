@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  postgres-db:
+    image: postgres
+    container_name: database-prod
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports: 
+      - "5432:5432"
+    expose:
+      - 5432
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    restart: always
+
+  miwp_airp_api:
+  #  image: niewidzialny84/miwp_airp_api:latest
+    image: miwp_airp_api:latest
+    container_name: api-prod
+    ports:
+      - "8000:80"
+    volumes:
+      - ./config:/code/configs
+
