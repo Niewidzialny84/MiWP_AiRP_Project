@@ -54,6 +54,11 @@ Adafruit_BMP280 bme;
 //MQUnifiedsensor MQ2(Board, Voltage_Resolution, ADC_Bit_Resolution, MQ2_PIN, MQ2_TYPE);
 MQUnifiedsensor MQ7(Board, Voltage_Resolution, ADC_Bit_Resolution, MQ7_PIN, MQ7_TYPE);
 
+float temperatureC = 0;
+float pressure = 0;
+int humidity = 0;
+float ppmCO = 0;
+
 AsyncWebServer server(80);
 
 const char* WIFI_AP_SSID = "NodeMCU";
@@ -145,6 +150,30 @@ bool initWiFi()
   return true;
 }
 
+void handleSensorsPage(AsyncWebServerRequest *request)
+{
+  char msg[1500];
+
+  snprintf(msg, 1500, "\
+    <!DOCTYPE HTML><html><head>\
+    <title>HTML Form to Input Data</title>\
+    <meta name='viewport' content='width=device-width, initial-scale=1'>\
+    <style>\
+      html {font-family: Times New Roman; display: inline-block; text-align: center;}\
+      h2 {font-size: 3.0rem; color: #FF0000;}\
+    </style>\
+    </head><body>\
+    <h2>Sensors data</h2>\
+    <p><span>Temperatur: </span><span>%.2f</span><span> C</span></p>\
+    <p><span>Humidity: </span><span>%d</span><span> %</span></p>\
+    <p><span>Pressure: </span><span>%.2f</span><span> hPA</span></p>\
+    <p><span>CO content: </span><span>%.2f</span><span> PPM</span></p>\
+    </body></html>",
+    temperatureC, humidity, pressure, ppmCO);
+  
+  request->send(200, "text/html", msg);
+}
+
 void setupWiFi()
 {
   if(initWiFi())
@@ -159,7 +188,10 @@ void setupWiFi()
     WiFi.softAP(WIFI_AP_SSID, NULL);
 
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(200, "text/html", index_html);});
+      request->send(200, "text/html", index_html);});
+
+    server.on("/sensors", HTTP_GET, [](AsyncWebServerRequest *request){
+      handleSensorsPage(request);});
 
     server.on("/", HTTP_POST, [](AsyncWebServerRequest *request) {
       int params = request->params();
@@ -196,6 +228,7 @@ void setupWiFi()
       restart = true;
       request->send(200, "text/plain", "Done. ESP will restart, connect to your router");
     });
+
     server.begin();
   }
 }
@@ -229,10 +262,17 @@ String serializeData()
 {
   DynamicJsonDocument data(1024);
 
-  data["humidity"] = dht.readHumidity();
-  data["temperatureC"] = dht.readTemperature();
-  data["pressure"] = bme.readPressure();
-  data["ppmCO"] = readMQData(&MQ7, MQ7_CO_A, MQ7_CO_B);
+  humidity = dht.readHumidity();
+  data["humidity"] = humidity;
+
+  temperatureC = dht.readTemperature();
+  data["temperatureC"] = temperatureC;
+
+  pressure = bme.readPressure();
+  data["pressure"] = pressure;
+
+  ppmCO = readMQData(&MQ7, MQ7_CO_A, MQ7_CO_B);
+  data["ppmCO"] = ppmCO;
   data["ppmAlcohol"] = readMQData(&MQ7, MQ7_Alcohol_A, MQ7_Alcohol_B);
   data["ppmCH4"] = readMQData(&MQ7, MQ7_CH4_A, MQ7_CH4_B);
   data["ppmH2"] = readMQData(&MQ7, MQ7_H2_A, MQ7_H2_B);

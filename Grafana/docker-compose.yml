@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    # networks:
+    #   - external-test-network
+
+volumes:
+  grafana-storage: {}
+
+#Optional when running with more containers
+networks:
+  external-test-network:
+    driver: bridge
+    external: true

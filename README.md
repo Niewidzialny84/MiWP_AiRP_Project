@@ -18,7 +18,9 @@ Used technologies and sofware:
 - [Adafruit BMP280 Library](https://github.com/adafruit/Adafruit_BMP280_Library)
 - [Arduinojson](https://arduinojson.org/?utm_source=meta&utm_medium=library.properties)
 - [MQUnifiedsensor](https://github.com/miguel5612/MQSensorsLib)
-- [esp826611](https://github.com/adafruit/DHT-sensor-library)
+- [esp826611 DHT sensor](https://github.com/adafruit/DHT-sensor-library)
+- [ESPAsyncWebSrv](https://github.com/dvarrel/ESPAsyncWebSrv)
+- [ESPAsyncTCP](https://github.com/dvarrel/ESPAsyncTCP)
 - Python 3
 - [FastAPI](https://fastapi.tiangolo.com/)
 - PostgreSQL
@@ -35,3 +37,11 @@ Used technologies and sofware:
 | MQ2_PIN | A0 | `MQ2` A0 |
 | VCC | VCC (3v3) | VCC |
 | GND | GNG | GND |
+
+## API
+
+API Running and details are inside [this README.md](/API/README.md).
+
+## Grafana
+
+Details about running grafana are inside [this README.md](/Grafana/README.md).

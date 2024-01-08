@@ -6,12 +6,17 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      #Set for you timezone as default is GMT
+      TZ: 'GMT+1'
+      PGTZ: 'GMT+1'
     ports: 
       - "5432:5432"
     expose:
       - 5432
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
+    # networks:
+    #   - external-test-network
     logging:
       options:
         max-size: 10m
@@ -19,11 +24,17 @@ services:
     restart: always
 
   miwp_airp_api:
-  #  image: niewidzialny84/miwp_airp_api:latest
-    image: miwp_airp_api:latest
+    image: niewidzialny84/miwp_airp_api:latest
     container_name: api-prod
     ports:
       - "8000:80"
     volumes:
       - ./config:/code/configs
+    # networks:
+    #   - external-test-network
 
+#Optional when running with more containers
+# networks:
+#   external-test-network:
+#     driver: bridge
+#     external: true
