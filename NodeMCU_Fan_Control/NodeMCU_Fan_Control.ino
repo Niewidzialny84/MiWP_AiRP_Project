@@ -202,6 +202,8 @@ void controlManual()
   {
     fanSpeedPercent = setFanSpeed;
   }
+  
+  setFanSpeedPercent(fanSpeedPercent);
 }
 
 void loop() 
